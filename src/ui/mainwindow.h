@@ -8,6 +8,7 @@
 // Forward declare instead of including — breaks circular includes
 class ServiceRepository;
 class ServiceTableModel;
+class MonitorEngine;
 
 class MainWindow : public QMainWindow
 {
@@ -29,6 +30,8 @@ private:
     QTableView         *m_tableView;
     ServiceRepository  *m_repo;
     ServiceTableModel  *m_tableModel;
+    MonitorEngine     *m_engine;
+
 };
 
 #endif // MAINWINDOW_H

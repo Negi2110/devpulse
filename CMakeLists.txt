@@ -28,6 +28,7 @@ add_executable(devpulse
     src/core/checkers/tcpchecker.cpp
     src/core/checkers/checkerfactory.h
     src/core/checkers/checkerfactory.cpp
+    src/core/monitorengine.h src/core/monitorengine.cpp
 )
 
 target_link_libraries(devpulse PRIVATE

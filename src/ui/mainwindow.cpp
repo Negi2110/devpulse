@@ -10,11 +10,14 @@
 #include <QStatusBar>
 #include <QMenuBar>
 #include "ui/dialogs/addservicedialog.h"
+#include "core/monitorengine.h"
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , m_repo(new ServiceRepository(this))
     , m_tableModel(new ServiceTableModel(this))
+    , m_engine(new MonitorEngine(m_repo, this))
+
 {
     setupUi();
     connectSignals();

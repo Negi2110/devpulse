@@ -16,6 +16,8 @@ add_executable(devpulse
     src/ui/mainwindow.cpp
     src/core/Service.h
     src/core/servicerepository.h src/core/servicerepository.cpp
+    src/ui/dialogs/addservicedialog.h src/ui/dialogs/addservicedialog.cpp
+
 )
 
 target_link_libraries(devpulse PRIVATE

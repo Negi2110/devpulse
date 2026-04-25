@@ -2,9 +2,11 @@
 #include <QApplication>
 #include <QMenu>
 #include <QAction>
+#include "ui/dialogs/addservicedialog.h"
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
+     , m_repo(new ServiceRepository(this))
 {
     setupUi();
 }
@@ -31,12 +33,27 @@ void MainWindow::setupUi()
 
     fileMenu->addAction(quitAction);
 
+    QAction *addAction = new QAction("&Add Service", this);
+    addAction->setShortcut(QKeySequence("Ctrl+N"));
+    connect(addAction, &QAction::triggered, this, &MainWindow::onAddService);
+    fileMenu->addAction(addAction);
+
     // Help menu
     QMenu *helpMenu = menuBar()->addMenu("&Help");
     QAction *aboutAction = new QAction("&About DevPulse", this);
     helpMenu->addAction(aboutAction);
 }
 
+void MainWindow::onAddService()
+{
+    AddServiceDialog dlg(this);
+    if (dlg.exec() == QDialog::Accepted) {
+        m_repo->addService(dlg.service());
+        m_statusLabel->setText(
+            QString("Services: %1").arg(m_repo->count())
+            );
+    }
+}
 void MainWindow::onFileQuit()
 {
     QApplication::quit();

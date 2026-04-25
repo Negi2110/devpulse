@@ -11,10 +11,10 @@ set(CMAKE_AUTORCC ON)
 find_package(Qt5 REQUIRED COMPONENTS Core Widgets)
 
 add_executable(devpulse
-    main.cpp
-    mainwindow.cpp
-    mainwindow.h
-    Service.h
+    src/main.cpp
+    src/ui/mainwindow.h
+    src/ui/mainwindow.cpp
+    src/core/Service.h
 )
 
 target_link_libraries(devpulse PRIVATE
@@ -23,5 +23,5 @@ target_link_libraries(devpulse PRIVATE
 )
 
 target_include_directories(devpulse PRIVATE
-    ${CMAKE_CURRENT_SOURCE_DIR}
+    ${CMAKE_CURRENT_SOURCE_DIR}/src
 )

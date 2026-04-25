@@ -18,12 +18,17 @@ add_executable(devpulse
     src/core/servicerepository.h src/core/servicerepository.cpp
     src/ui/dialogs/addservicedialog.h src/ui/dialogs/addservicedialog.cpp
     src/models/servicetablemodel.h src/models/servicetablemodel.cpp
+    src/core/checkers/IChecker.h
+    src/core/checkers/httpchecker.h src/core/checkers/httpchecker.cpp
 
 )
+
+find_package(Qt5 REQUIRED COMPONENTS Core Widgets Network)
 
 target_link_libraries(devpulse PRIVATE
     Qt5::Core
     Qt5::Widgets
+    Qt5::Network
 )
 
 target_include_directories(devpulse PRIVATE

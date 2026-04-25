@@ -20,6 +20,7 @@ add_executable(devpulse
     src/models/servicetablemodel.h src/models/servicetablemodel.cpp
     src/core/checkers/IChecker.h
     src/core/checkers/httpchecker.h src/core/checkers/httpchecker.cpp
+    src/core/checkers/tcpchecker.h src/core/checkers/tcpchecker.cpp
 
 )
 

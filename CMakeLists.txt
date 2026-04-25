@@ -15,6 +15,7 @@ add_executable(devpulse
     src/ui/mainwindow.h
     src/ui/mainwindow.cpp
     src/core/Service.h
+    src/core/servicerepository.h src/core/servicerepository.cpp
 )
 
 target_link_libraries(devpulse PRIVATE

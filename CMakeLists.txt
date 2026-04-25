@@ -8,23 +8,27 @@ set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTOUIC ON)
 set(CMAKE_AUTORCC ON)
 
-find_package(Qt5 REQUIRED COMPONENTS Core Widgets)
+find_package(Qt5 REQUIRED COMPONENTS Core Widgets Network)
 
 add_executable(devpulse
     src/main.cpp
     src/ui/mainwindow.h
     src/ui/mainwindow.cpp
     src/core/Service.h
-    src/core/servicerepository.h src/core/servicerepository.cpp
-    src/ui/dialogs/addservicedialog.h src/ui/dialogs/addservicedialog.cpp
-    src/models/servicetablemodel.h src/models/servicetablemodel.cpp
+    src/core/servicerepository.h
+    src/core/servicerepository.cpp
+    src/ui/dialogs/addservicedialog.h
+    src/ui/dialogs/addservicedialog.cpp
+    src/models/servicetablemodel.h
+    src/models/servicetablemodel.cpp
     src/core/checkers/IChecker.h
-    src/core/checkers/httpchecker.h src/core/checkers/httpchecker.cpp
-    src/core/checkers/tcpchecker.h src/core/checkers/tcpchecker.cpp
-
+    src/core/checkers/httpchecker.h
+    src/core/checkers/httpchecker.cpp
+    src/core/checkers/tcpchecker.h
+    src/core/checkers/tcpchecker.cpp
+    src/core/checkers/checkerfactory.h
+    src/core/checkers/checkerfactory.cpp
 )
-
-find_package(Qt5 REQUIRED COMPONENTS Core Widgets Network)
 
 target_link_libraries(devpulse PRIVATE
     Qt5::Core

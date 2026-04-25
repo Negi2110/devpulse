@@ -14,6 +14,7 @@ add_executable(devpulse
     main.cpp
     mainwindow.cpp
     mainwindow.h
+    Service.h
 )
 
 target_link_libraries(devpulse PRIVATE

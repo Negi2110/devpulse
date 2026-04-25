@@ -1,47 +1,78 @@
 #include "ui/mainwindow.h"
+#include "core/servicerepository.h"
+#include "models/servicetablemodel.h"
 #include <QApplication>
 #include <QMenu>
 #include <QAction>
+#include <QVBoxLayout>
+#include <QWidget>
+#include <QHeaderView>
+#include <QStatusBar>
+#include <QMenuBar>
 #include "ui/dialogs/addservicedialog.h"
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
-     , m_repo(new ServiceRepository(this))
+    , m_repo(new ServiceRepository(this))
+    , m_tableModel(new ServiceTableModel(this))
 {
     setupUi();
+    connectSignals();
 }
 
 MainWindow::~MainWindow() {}
 
 void MainWindow::setupUi()
 {
-    // Window properties
     setWindowTitle("DevPulse");
     setMinimumSize(1100, 650);
 
+    // Table view
+    m_tableView = new QTableView(this);
+    m_tableView->setModel(m_tableModel);
+    m_tableView->horizontalHeader()->setStretchLastSection(true);
+    m_tableView->setSelectionBehavior(QAbstractItemView::SelectRows);
+    m_tableView->setEditTriggers(QAbstractItemView::NoEditTriggers);
+    m_tableView->verticalHeader()->setVisible(false);
+    m_tableView->setAlternatingRowColors(true);
+
+    setCentralWidget(m_tableView);
+
     // Status bar
-    m_statusLabel = new QLabel("All systems operational", this);
+    m_statusLabel = new QLabel("No services added", this);
     statusBar()->addWidget(m_statusLabel);
 
-    // File menu
+    // Menu
     QMenu *fileMenu = menuBar()->addMenu("&File");
-
-    QAction *quitAction = new QAction("&Quit", this);
-    quitAction->setShortcut(QKeySequence::Quit);
-    connect(quitAction, &QAction::triggered,
-            this, &MainWindow::onFileQuit);
-
-    fileMenu->addAction(quitAction);
 
     QAction *addAction = new QAction("&Add Service", this);
     addAction->setShortcut(QKeySequence("Ctrl+N"));
     connect(addAction, &QAction::triggered, this, &MainWindow::onAddService);
     fileMenu->addAction(addAction);
 
-    // Help menu
-    QMenu *helpMenu = menuBar()->addMenu("&Help");
-    QAction *aboutAction = new QAction("&About DevPulse", this);
-    helpMenu->addAction(aboutAction);
+    fileMenu->addSeparator();
+
+    QAction *quitAction = new QAction("&Quit", this);
+    quitAction->setShortcut(QKeySequence::Quit);
+    connect(quitAction, &QAction::triggered, this, &MainWindow::onFileQuit);
+    fileMenu->addAction(quitAction);
+}
+
+void MainWindow::connectSignals()
+{
+    connect(m_repo, &ServiceRepository::serviceAdded,
+            m_tableModel, &ServiceTableModel::addService);
+
+    connect(m_repo, &ServiceRepository::serviceRemoved,
+            m_tableModel, &ServiceTableModel::removeService);
+
+    connect(m_repo, &ServiceRepository::serviceUpdated,
+            m_tableModel, &ServiceTableModel::updateService);
+}
+
+void MainWindow::onFileQuit()
+{
+    QApplication::quit();
 }
 
 void MainWindow::onAddService()
@@ -50,11 +81,7 @@ void MainWindow::onAddService()
     if (dlg.exec() == QDialog::Accepted) {
         m_repo->addService(dlg.service());
         m_statusLabel->setText(
-            QString("Services: %1").arg(m_repo->count())
+            QString("%1 service(s) monitored").arg(m_repo->count())
             );
     }
-}
-void MainWindow::onFileQuit()
-{
-    QApplication::quit();
 }

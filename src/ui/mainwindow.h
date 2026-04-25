@@ -2,10 +2,12 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
-#include <QMenuBar>
-#include <QStatusBar>
 #include <QLabel>
-#include "core/servicerepository.h"
+#include <QTableView>
+
+// Forward declare instead of including — breaks circular includes
+class ServiceRepository;
+class ServiceTableModel;
 
 class MainWindow : public QMainWindow
 {
@@ -21,10 +23,12 @@ private slots:
 
 private:
     void setupUi();
+    void connectSignals();
 
-    QLabel *m_statusLabel;
-    ServiceRepository   *m_repo;
-
+    QLabel             *m_statusLabel;
+    QTableView         *m_tableView;
+    ServiceRepository  *m_repo;
+    ServiceTableModel  *m_tableModel;
 };
 
 #endif // MAINWINDOW_H

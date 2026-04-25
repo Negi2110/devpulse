@@ -17,6 +17,7 @@ add_executable(devpulse
     src/core/Service.h
     src/core/servicerepository.h src/core/servicerepository.cpp
     src/ui/dialogs/addservicedialog.h src/ui/dialogs/addservicedialog.cpp
+    src/models/servicetablemodel.h src/models/servicetablemodel.cpp
 
 )
 

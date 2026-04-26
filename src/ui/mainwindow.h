@@ -5,6 +5,7 @@
 #include <QLabel>
 #include <QTableView>
 #include "core/storage/jsonprofilemanager.h"
+#include <QSettings>
 // Forward declare instead of including — breaks circular includes
 class ServiceRepository;
 class ServiceTableModel;
@@ -30,6 +31,8 @@ private:
     void closeEvent(QCloseEvent *event) override;
     void onSaveProfile();
     void onLoadProfile();
+    void saveLastProfile(const QString &path);
+    void autoLoadLastProfile();
 
     QLabel             *m_statusLabel;
     QTableView         *m_tableView;

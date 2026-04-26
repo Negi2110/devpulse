@@ -17,7 +17,7 @@
 #include <QCloseEvent>
 #include <QFileDialog>
 #include <QMessageBox>
-
+#include <QFileInfo>
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -29,6 +29,8 @@ MainWindow::MainWindow(QWidget *parent)
 {
     setupUi();
     connectSignals();
+    autoLoadLastProfile();
+
 }
 
 MainWindow::~MainWindow() {}
@@ -167,6 +169,8 @@ void MainWindow::onSaveProfile()
 
     if (m_profileManager.save(m_repo->allServices(), path)) {
         statusBar()->showMessage("Profile saved: " + path, 3000);
+        saveLastProfile(path);
+
     } else {
         QMessageBox::warning(this, "Save Failed",
                              m_profileManager.lastError());
@@ -195,6 +199,9 @@ void MainWindow::onLoadProfile()
     for (const Service &s : services)
         m_repo->addService(s);
 
+    saveLastProfile(path);
+
+
     m_statusLabel->setText(
         QString("%1 service(s) monitored").arg(m_repo->count())
         );
@@ -209,4 +216,31 @@ void MainWindow::onAddService()
             QString("%1 service(s) monitored").arg(m_repo->count())
             );
     }
+}
+void MainWindow::saveLastProfile(const QString &path)
+{
+    QSettings settings("devpulse", "devpulse");
+    settings.setValue("lastProfile", path);
+}
+
+void MainWindow::autoLoadLastProfile()
+{
+    QSettings settings("devpulse", "devpulse");
+    QString path = settings.value("lastProfile").toString();
+
+    if (path.isEmpty()) return;
+
+    QFileInfo info(path);
+    if (!info.exists()) return;
+
+    QVector<Service> services = m_profileManager.load(path);
+    if (services.isEmpty()) return;
+
+    for (const Service &s : services)
+        m_repo->addService(s);
+
+    m_statusLabel->setText(
+        QString("%1 service(s) monitored").arg(m_repo->count())
+        );
+    statusBar()->showMessage("Auto-loaded: " + path, 3000);
 }

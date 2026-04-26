@@ -11,6 +11,8 @@
 #include <QMenuBar>
 #include "ui/dialogs/addservicedialog.h"
 #include "core/monitorengine.h"
+#include "ui/latencygraphwidget.h"
+#include <QSplitter>
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -39,8 +41,18 @@ void MainWindow::setupUi()
     m_tableView->verticalHeader()->setVisible(false);
     m_tableView->setAlternatingRowColors(true);
 
-    setCentralWidget(m_tableView);
+    // Create graph widget
+    m_graphWidget = new LatencyGraphWidget(this);
+    m_graphWidget->setMinimumHeight(250);
 
+    // Splitter — table on top, graph on bottom
+    QSplitter *splitter = new QSplitter(Qt::Vertical, this);
+    splitter->addWidget(m_tableView);
+    splitter->addWidget(m_graphWidget);
+    splitter->setStretchFactor(0, 1);
+    splitter->setStretchFactor(1, 1);
+
+    setCentralWidget(splitter);
     // Status bar
     m_statusLabel = new QLabel("No services added", this);
     statusBar()->addWidget(m_statusLabel);
@@ -71,6 +83,27 @@ void MainWindow::connectSignals()
 
     connect(m_repo, &ServiceRepository::serviceUpdated,
             m_tableModel, &ServiceTableModel::updateService);
+
+    connect(m_engine, &MonitorEngine::serviceStatusChanged,
+            this, [this](const Service &service){
+               m_graphWidget->updateForService(
+                  service.id,
+                m_engine->latencyStore()
+            );
+    });
+
+    connect(m_tableView->selectionModel(),
+            &QItemSelectionModel::currentRowChanged,
+            this, [this](const QModelIndex &current, const QModelIndex&) {
+                if (!current.isValid()) return;
+                QString id = m_tableModel->serviceIdAt(current.row());
+                m_graphWidget->updateForService(id, m_engine->latencyStore());
+                m_graphWidget->setTitle(
+                    m_tableModel->data(
+                                    m_tableModel->index(current.row(), 0)
+                                    ).toString() + " — Latency"
+                    );
+            });
 }
 
 void MainWindow::onFileQuit()

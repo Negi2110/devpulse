@@ -5,8 +5,10 @@ LatencyStore::LatencyStore(int capacity)
     : m_capacity(capacity)
 {}
 
+
 void LatencyStore::addReading(const QString &serviceId, int latencyMs)
 {
+
     if (!m_buffers.contains(serviceId)) {
         RingBuffer buf;
         buf.data.resize(m_capacity);
@@ -21,8 +23,8 @@ void LatencyStore::addReading(const QString &serviceId, int latencyMs)
     buf.head = (buf.head + 1) % m_capacity;
     if (buf.count < m_capacity)
         buf.count++;
-}
 
+}
 QVector<int> LatencyStore::readings(const QString &serviceId) const
 {
     const RingBuffer *buf = bufferFor(serviceId);

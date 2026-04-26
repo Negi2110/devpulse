@@ -30,12 +30,16 @@ add_executable(devpulse
     src/core/checkers/checkerfactory.cpp
     src/core/monitorengine.h src/core/monitorengine.cpp
     src/core/monitoring/latencystore.h src/core/monitoring/latencystore.cpp
+    src/ui/latencygraphwidget.h src/ui/latencygraphwidget.cpp
 )
+find_package(Qt5 REQUIRED COMPONENTS Core Widgets Network Charts)
 
 target_link_libraries(devpulse PRIVATE
     Qt5::Core
     Qt5::Widgets
     Qt5::Network
+    Qt5::Charts
+
 )
 
 target_include_directories(devpulse PRIVATE

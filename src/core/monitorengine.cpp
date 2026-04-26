@@ -5,12 +5,10 @@ MonitorEngine::MonitorEngine(ServiceRepository *repo, QObject *parent)
     : QObject(parent)
     , m_repo(repo)
 {
-    // Auto-start monitoring when services are added/removed
     connect(repo, &ServiceRepository::serviceAdded,
             this, [this](const Service &s) {
                 startMonitoring(s.id);
             });
-
     connect(repo, &ServiceRepository::serviceRemoved,
             this, [this](const QString &id) {
                 stopMonitoring(id);
@@ -38,10 +36,8 @@ void MonitorEngine::startMonitoring(const QString &serviceId)
             this, &MonitorEngine::onTimerFired);
 
     m_monitors[serviceId] = { timer, checker };
-
     timer->start();
 
-    // Run first check immediately
     runCheck(service);
 }
 
@@ -80,9 +76,12 @@ void MonitorEngine::onCheckFinished(const CheckResult &result)
     if (service.id.isEmpty())
         return;
 
-    service.status    = result.status;
-    service.latencyMs = result.latencyMs;
+    service.status      = result.status;
+    service.latencyMs   = result.latencyMs;
     service.lastChecked = QDateTime::currentDateTimeUtc();
+
+    if (result.latencyMs > 0)
+        m_latencyStore.addReading(result.serviceId,result.latencyMs);
 
     m_repo->updateService(service);
     emit serviceStatusChanged(service);

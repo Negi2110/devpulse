@@ -9,6 +9,7 @@
 class ServiceRepository;
 class ServiceTableModel;
 class MonitorEngine;
+class LatencyGraphWidget;
 
 class MainWindow : public QMainWindow
 {
@@ -31,6 +32,8 @@ private:
     ServiceRepository  *m_repo;
     ServiceTableModel  *m_tableModel;
     MonitorEngine     *m_engine;
+    LatencyGraphWidget *m_graphWidget;
+
 
 };
 

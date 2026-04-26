@@ -35,7 +35,7 @@ public:
     void addService(const Service &service);
     void removeService(const QString &id);
     void updateService(const Service &service);
-
+    QString serviceIdAt(int row) const;
 private:
     QVector<Service> m_services;
 

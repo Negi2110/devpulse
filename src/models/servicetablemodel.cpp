@@ -84,7 +84,11 @@ void ServiceTableModel::removeService(const QString &id)
     m_services.removeAt(row);
     endRemoveRows();
 }
-
+QString ServiceTableModel::serviceIdAt(int row) const
+{
+    if (row < 0 || row >= m_services.size()) return {};
+    return m_services[row].id;
+}
 void ServiceTableModel::updateService(const Service &service)
 {
     int row = indexOfId(service.id);

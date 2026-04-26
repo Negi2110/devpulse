@@ -6,6 +6,9 @@
 #include <QTableView>
 #include "core/storage/jsonprofilemanager.h"
 #include <QSettings>
+#include "models/logmodel.h"
+#include "ui/logpanelwidget.h"
+
 // Forward declare instead of including — breaks circular includes
 class ServiceRepository;
 class ServiceTableModel;
@@ -42,6 +45,8 @@ private:
     LatencyGraphWidget *m_graphWidget;
     TrayManager *m_trayManager;
     JsonProfileManager m_profileManager;
+    LogModel       *m_logModel;
+    LogPanelWidget *m_logPanel;
 };
 
 #endif // MAINWINDOW_H

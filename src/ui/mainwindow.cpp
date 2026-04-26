@@ -25,6 +25,7 @@ MainWindow::MainWindow(QWidget *parent)
     , m_tableModel(new ServiceTableModel(this))
     , m_engine(new MonitorEngine(m_repo, this))
     , m_trayManager(new TrayManager(this, this))
+    , m_logModel(new LogModel(this))
 
 {
     setupUi();
@@ -54,11 +55,16 @@ void MainWindow::setupUi()
     m_graphWidget->setMinimumHeight(250);
 
     // Splitter — table on top, graph on bottom
+    // Splitter — table | graph | logs
     QSplitter *splitter = new QSplitter(Qt::Vertical, this);
     splitter->addWidget(m_tableView);
     splitter->addWidget(m_graphWidget);
+    m_logPanel = new LogPanelWidget(m_logModel, this);
+    m_logPanel->setMinimumHeight(150);
+    splitter->addWidget(m_logPanel);
     splitter->setStretchFactor(0, 1);
     splitter->setStretchFactor(1, 1);
+    splitter->setStretchFactor(2, 0);
 
     setCentralWidget(splitter);
     // Status bar
@@ -137,6 +143,8 @@ void MainWindow::connectSignals()
 
     connect(m_trayManager, &TrayManager::quitRequested,
             this, &MainWindow::onFileQuit);
+    connect(m_engine, &MonitorEngine::logEntry,
+            m_logModel, &LogModel::addEntry);
 }
 
 void MainWindow::onFileQuit()

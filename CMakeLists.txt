@@ -33,6 +33,8 @@ add_executable(devpulse
     src/ui/latencygraphwidget.h src/ui/latencygraphwidget.cpp
     src/ui/traymanager.h src/ui/traymanager.cpp
     src/core/storage/jsonprofilemanager.h src/core/storage/jsonprofilemanager.cpp
+    src/models/logmodel.h src/models/logmodel.cpp
+    src/ui/logpanelwidget.h src/ui/logpanelwidget.cpp
 )
 find_package(Qt5 REQUIRED COMPONENTS Core Widgets Network Charts)
 

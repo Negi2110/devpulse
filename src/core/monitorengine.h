@@ -9,6 +9,8 @@
 #include "checkers/IChecker.h"
 #include <QVariant>
 #include "monitoring/latencystore.h"
+#include "models/logmodel.h"
+
 class MonitorEngine : public QObject
 {
     Q_OBJECT
@@ -24,7 +26,7 @@ public:
 
 signals:
     void serviceStatusChanged(const Service &service);
-
+    void logEntry(const LogEntry &entry);
 private slots:
     void onTimerFired();
     void onCheckFinished(const CheckResult &result);

@@ -76,12 +76,27 @@ void MonitorEngine::onCheckFinished(const CheckResult &result)
     if (service.id.isEmpty())
         return;
 
-    service.status      = result.status;
+    service.status     = result.status;
     service.latencyMs   = result.latencyMs;
     service.lastChecked = QDateTime::currentDateTimeUtc();
 
     if (result.latencyMs > 0)
         m_latencyStore.addReading(result.serviceId,result.latencyMs);
+
+    LogEntry entry;
+    entry.timestamp   = QDateTime::currentDateTimeUtc();
+    entry.serviceId   = service.id;
+    entry.serviceName = service.name;
+    entry.level      = (result.status == ServiceStatus::Down)
+                      ? LogLevel::Error
+                      : (result.status == ServiceStatus::Degraded)
+                            ? LogLevel::Warning
+                            : LogLevel::Info;
+    entry.message     = QString("Status: %1 | Latency: %2ms")
+                        .arg(service.statusString())
+                        .arg(result.latencyMs);
+
+    emit logEntry(entry);
 
     m_repo->updateService(service);
     emit serviceStatusChanged(service);

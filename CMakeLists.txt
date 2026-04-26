@@ -29,6 +29,7 @@ add_executable(devpulse
     src/core/checkers/checkerfactory.h
     src/core/checkers/checkerfactory.cpp
     src/core/monitorengine.h src/core/monitorengine.cpp
+    src/core/monitoring/latencystore.h src/core/monitoring/latencystore.cpp
 )
 
 target_link_libraries(devpulse PRIVATE

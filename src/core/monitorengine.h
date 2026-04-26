@@ -8,7 +8,7 @@
 #include "servicerepository.h"
 #include "checkers/IChecker.h"
 #include <QVariant>
-
+#include "monitoring/latencystore.h"
 class MonitorEngine : public QObject
 {
     Q_OBJECT
@@ -20,6 +20,7 @@ public:
     void startMonitoring(const QString &serviceId);
     void stopMonitoring(const QString &serviceId);
     void checkNow(const QString &serviceId);
+    const LatencyStore& latencyStore() const { return m_latencyStore; }
 
 signals:
     void serviceStatusChanged(const Service &service);
@@ -38,6 +39,8 @@ private:
 
     ServiceRepository              *m_repo;
     QMap<QString, ServiceMonitor>   m_monitors;
+    LatencyStore                    m_latencyStore;
+
 };
 
 #endif // MONITORENGINE_H

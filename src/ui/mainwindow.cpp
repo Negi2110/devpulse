@@ -13,12 +13,15 @@
 #include "core/monitorengine.h"
 #include "ui/latencygraphwidget.h"
 #include <QSplitter>
+#include "ui/traymanager.h"
+#include <QCloseEvent>
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , m_repo(new ServiceRepository(this))
     , m_tableModel(new ServiceTableModel(this))
     , m_engine(new MonitorEngine(m_repo, this))
+    , m_trayManager(new TrayManager(this, this))
 
 {
     setupUi();
@@ -104,6 +107,15 @@ void MainWindow::connectSignals()
                                     ).toString() + " — Latency"
                     );
             });
+
+    connect(m_engine, &MonitorEngine::serviceStatusChanged,
+            m_trayManager, &TrayManager::onServiceStatusChanged);
+
+    connect(m_trayManager, &TrayManager::showMainWindowRequested,
+            this, &QWidget::show);
+
+    connect(m_trayManager, &TrayManager::quitRequested,
+            this, &MainWindow::onFileQuit);
 }
 
 void MainWindow::onFileQuit()
@@ -111,6 +123,15 @@ void MainWindow::onFileQuit()
     QApplication::quit();
 }
 
+void MainWindow::closeEvent(QCloseEvent *event)
+{
+    if (m_trayManager->isAvailable()) {
+        hide();
+        event->ignore();
+    } else {
+        event->accept();
+    }
+}
 void MainWindow::onAddService()
 {
     AddServiceDialog dlg(this);

@@ -10,6 +10,7 @@ class ServiceRepository;
 class ServiceTableModel;
 class MonitorEngine;
 class LatencyGraphWidget;
+class TrayManager;
 
 class MainWindow : public QMainWindow
 {
@@ -26,6 +27,7 @@ private slots:
 private:
     void setupUi();
     void connectSignals();
+    void closeEvent(QCloseEvent *event) override;
 
     QLabel             *m_statusLabel;
     QTableView         *m_tableView;
@@ -33,7 +35,7 @@ private:
     ServiceTableModel  *m_tableModel;
     MonitorEngine     *m_engine;
     LatencyGraphWidget *m_graphWidget;
-
+    TrayManager *m_trayManager;
 
 };
 

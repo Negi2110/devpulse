@@ -15,6 +15,9 @@
 #include <QSplitter>
 #include "ui/traymanager.h"
 #include <QCloseEvent>
+#include <QFileDialog>
+#include <QMessageBox>
+
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -67,6 +70,22 @@ void MainWindow::setupUi()
     addAction->setShortcut(QKeySequence("Ctrl+N"));
     connect(addAction, &QAction::triggered, this, &MainWindow::onAddService);
     fileMenu->addAction(addAction);
+
+    fileMenu->addSeparator();
+
+    fileMenu->addSeparator();
+
+    QAction *saveAction = new QAction("&Save Profile", this);
+    saveAction->setShortcut(QKeySequence::Save);
+    connect(saveAction, &QAction::triggered,
+            this, &MainWindow::onSaveProfile);
+    fileMenu->addAction(saveAction);
+
+    QAction *loadAction = new QAction("&Load Profile", this);
+    saveAction->setShortcut(QKeySequence::Open);
+    connect(loadAction, &QAction::triggered,
+            this, &MainWindow::onLoadProfile);
+    fileMenu->addAction(loadAction);
 
     fileMenu->addSeparator();
 
@@ -131,6 +150,55 @@ void MainWindow::closeEvent(QCloseEvent *event)
     } else {
         event->accept();
     }
+}
+void MainWindow::onSaveProfile()
+{
+    QString path = QFileDialog::getSaveFileName(
+        this,
+        "Save Profile",
+        QDir::homePath(),
+        "DevPulse Profiles (*.json)"
+        );
+
+    if (path.isEmpty()) return;
+
+    if (!path.endsWith(".json"))
+        path += ".json";
+
+    if (m_profileManager.save(m_repo->allServices(), path)) {
+        statusBar()->showMessage("Profile saved: " + path, 3000);
+    } else {
+        QMessageBox::warning(this, "Save Failed",
+                             m_profileManager.lastError());
+    }
+}
+
+void MainWindow::onLoadProfile()
+{
+    QString path = QFileDialog::getOpenFileName(
+        this,
+        "Load Profile",
+        QDir::homePath(),
+        "DevPulse Profiles (*.json)"
+        );
+
+    if (path.isEmpty()) return;
+
+    QVector<Service> services = m_profileManager.load(path);
+
+    if (services.isEmpty() && !m_profileManager.lastError().isEmpty()) {
+        QMessageBox::warning(this, "Load Failed",
+                             m_profileManager.lastError());
+        return;
+    }
+
+    for (const Service &s : services)
+        m_repo->addService(s);
+
+    m_statusLabel->setText(
+        QString("%1 service(s) monitored").arg(m_repo->count())
+        );
+    statusBar()->showMessage("Profile loaded: " + path, 3000);
 }
 void MainWindow::onAddService()
 {

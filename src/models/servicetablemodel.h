@@ -17,7 +17,8 @@ public:
         ColStatus   = 2,
         ColLatency  = 3,
         ColInterval = 4,
-        ColCount    = 5   // total number of columns
+        ColUptime   = 5,
+        ColCount    = 6
     };
 
     explicit ServiceTableModel(QObject *parent = nullptr);

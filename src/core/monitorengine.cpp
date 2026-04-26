@@ -79,10 +79,11 @@ void MonitorEngine::onCheckFinished(const CheckResult &result)
     service.status     = result.status;
     service.latencyMs   = result.latencyMs;
     service.lastChecked = QDateTime::currentDateTimeUtc();
-
+    service.uptimePercent = m_uptimeTracker.uptimePercent(result.serviceId);
     if (result.latencyMs > 0)
         m_latencyStore.addReading(result.serviceId,result.latencyMs);
-
+    m_uptimeTracker.record(result.serviceId,
+                           result.status != ServiceStatus::Down);
     LogEntry entry;
     entry.timestamp   = QDateTime::currentDateTimeUtc();
     entry.serviceId   = service.id;

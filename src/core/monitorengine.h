@@ -10,6 +10,7 @@
 #include <QVariant>
 #include "monitoring/latencystore.h"
 #include "models/logmodel.h"
+#include "monitoring/uptimetracker.h"
 
 class MonitorEngine : public QObject
 {
@@ -23,7 +24,9 @@ public:
     void stopMonitoring(const QString &serviceId);
     void checkNow(const QString &serviceId);
     const LatencyStore& latencyStore() const { return m_latencyStore; }
-
+    double uptimePercent(const QString &serviceId) const {
+        return m_uptimeTracker.uptimePercent(serviceId);
+    }
 signals:
     void serviceStatusChanged(const Service &service);
     void logEntry(const LogEntry &entry);
@@ -42,6 +45,7 @@ private:
     ServiceRepository              *m_repo;
     QMap<QString, ServiceMonitor>   m_monitors;
     LatencyStore                    m_latencyStore;
+    UptimeTracker m_uptimeTracker;
 
 };
 

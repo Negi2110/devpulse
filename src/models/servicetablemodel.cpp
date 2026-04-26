@@ -35,6 +35,8 @@ QVariant ServiceTableModel::data(const QModelIndex &index, int role) const
                        ? QString("--")
                        : QString("%1 ms").arg(s.latencyMs);
         case ColInterval: return QString("%1 s").arg(s.intervalSecs);
+        case ColUptime:
+            return QString("%1%").arg(s.uptimePercent, 0, 'f', 1);
         default:          return {};
         }
     }
@@ -64,6 +66,7 @@ QVariant ServiceTableModel::headerData(int section,
     case ColStatus:   return "Status";
     case ColLatency:  return "Latency";
     case ColInterval: return "Interval";
+    case ColUptime:   return "Uptime";
     default:          return {};
     }
 }

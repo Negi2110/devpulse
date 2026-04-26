@@ -35,6 +35,7 @@ add_executable(devpulse
     src/core/storage/jsonprofilemanager.h src/core/storage/jsonprofilemanager.cpp
     src/models/logmodel.h src/models/logmodel.cpp
     src/ui/logpanelwidget.h src/ui/logpanelwidget.cpp
+    src/core/monitoring/uptimetracker.h src/core/monitoring/uptimetracker.cpp
 )
 find_package(Qt5 REQUIRED COMPONENTS Core Widgets Network Charts)
 

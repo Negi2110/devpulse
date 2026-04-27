@@ -49,18 +49,37 @@ void MainWindow::setupUi()
     // Table view
     m_tableView = new QTableView(this);
     m_tableView->setModel(m_tableModel);
-    m_tableView->horizontalHeader()->setStretchLastSection(true);
     m_tableView->setSelectionBehavior(QAbstractItemView::SelectRows);
     m_tableView->setEditTriggers(QAbstractItemView::NoEditTriggers);
     m_tableView->verticalHeader()->setVisible(false);
     m_tableView->setContextMenuPolicy(Qt::CustomContextMenu);
     m_tableView->setShowGrid(false);
-    m_tableView->setSelectionBehavior(QAbstractItemView::SelectRows);
-    m_tableView->horizontalHeader()->setDefaultSectionSize(150);
-    m_tableView->horizontalHeader()->setSectionResizeMode(
-        ServiceTableModel::ColUrl, QHeaderView::Stretch);
     m_tableView->verticalHeader()->setDefaultSectionSize(36);
     m_tableView->setWordWrap(false);
+
+    m_tableView->horizontalHeader()->setSectionResizeMode(
+        ServiceTableModel::ColName, QHeaderView::Fixed);
+    m_tableView->horizontalHeader()->setSectionResizeMode(
+        ServiceTableModel::ColUrl, QHeaderView::Stretch);
+    m_tableView->horizontalHeader()->setSectionResizeMode(
+        ServiceTableModel::ColStatus, QHeaderView::Fixed);
+    m_tableView->horizontalHeader()->setSectionResizeMode(
+        ServiceTableModel::ColLatency, QHeaderView::Fixed);
+    m_tableView->horizontalHeader()->setSectionResizeMode(
+        ServiceTableModel::ColInterval, QHeaderView::Fixed);
+    m_tableView->horizontalHeader()->setSectionResizeMode(
+        ServiceTableModel::ColUptime, QHeaderView::Fixed);
+
+    m_tableView->horizontalHeader()->resizeSection(
+        ServiceTableModel::ColName, 150);
+    m_tableView->horizontalHeader()->resizeSection(
+        ServiceTableModel::ColStatus, 100);
+    m_tableView->horizontalHeader()->resizeSection(
+        ServiceTableModel::ColLatency, 100);
+    m_tableView->horizontalHeader()->resizeSection(
+        ServiceTableModel::ColInterval, 80);
+    m_tableView->horizontalHeader()->resizeSection(
+        ServiceTableModel::ColUptime, 100);
 
     // Create graph widget
     m_graphWidget = new LatencyGraphWidget(this);

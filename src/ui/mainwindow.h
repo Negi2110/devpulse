@@ -9,7 +9,6 @@
 #include "models/logmodel.h"
 #include "ui/logpanelwidget.h"
 
-// Forward declare instead of including — breaks circular includes
 class ServiceRepository;
 class ServiceTableModel;
 class MonitorEngine;
@@ -27,14 +26,15 @@ public:
 private slots:
     void onFileQuit();
     void onAddService();
+    void onSaveProfile();
+    void onLoadProfile();
+    void onExportLogs();
+    void onTableContextMenu(const QPoint &pos);
 
 private:
     void setupUi();
     void connectSignals();
     void closeEvent(QCloseEvent *event) override;
-    void onSaveProfile();
-    void onLoadProfile();
-    void onTableContextMenu(const QPoint &pos);
     void saveLastProfile(const QString &path);
     void autoLoadLastProfile();
 
@@ -42,12 +42,12 @@ private:
     QTableView         *m_tableView;
     ServiceRepository  *m_repo;
     ServiceTableModel  *m_tableModel;
-    MonitorEngine     *m_engine;
+    MonitorEngine      *m_engine;
     LatencyGraphWidget *m_graphWidget;
-    TrayManager *m_trayManager;
-    JsonProfileManager m_profileManager;
-    LogModel       *m_logModel;
-    LogPanelWidget *m_logPanel;
+    TrayManager        *m_trayManager;
+    JsonProfileManager  m_profileManager;
+    LogModel           *m_logModel;
+    LogPanelWidget     *m_logPanel;
 };
 
 #endif // MAINWINDOW_H

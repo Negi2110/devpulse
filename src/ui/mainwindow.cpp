@@ -20,6 +20,9 @@
 #include <QFileInfo>
 #include <QClipboard>
 #include <QStyle>
+#include <QTextStream>
+#include <QFile>
+#include <QDir>
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -50,7 +53,6 @@ void MainWindow::setupUi()
     m_tableView->setSelectionBehavior(QAbstractItemView::SelectRows);
     m_tableView->setEditTriggers(QAbstractItemView::NoEditTriggers);
     m_tableView->verticalHeader()->setVisible(false);
-    m_tableView->setAlternatingRowColors(true);
     m_tableView->setContextMenuPolicy(Qt::CustomContextMenu);
     m_tableView->setShowGrid(false);
     m_tableView->setSelectionBehavior(QAbstractItemView::SelectRows);
@@ -104,6 +106,12 @@ void MainWindow::setupUi()
     connect(loadAction, &QAction::triggered,
             this, &MainWindow::onLoadProfile);
     fileMenu->addAction(loadAction);
+
+    fileMenu->addSeparator();
+    QAction *exportAction = new QAction("&Export Logs", this);
+    connect(exportAction, &QAction::triggered,
+            this, &MainWindow::onExportLogs);
+    fileMenu->addAction(exportAction);
 
     fileMenu->addSeparator();
 
@@ -280,6 +288,41 @@ void MainWindow::onTableContextMenu(const QPoint &pos)
 
     menu.exec(m_tableView->viewport()->mapToGlobal(pos));
 }
+
+void MainWindow::onExportLogs()
+{
+    QString path = QFileDialog::getSaveFileName(
+        this,
+        "Export Logs",
+        QDir::homePath() + "/devpulse-logs.txt",
+        "Text Files (*.txt);;All Files (*)"
+        );
+
+    if (path.isEmpty()) return;
+
+    QFile file(path);
+    if (!file.open(QIODevice::WriteOnly | QIODevice::Text)) {
+        QMessageBox::warning(this, "Export Failed",
+                             "Cannot write to: " + path);
+        return;
+    }
+
+    QTextStream out(&file);
+    out << "DevPulse Log Export\n";
+    out << "Generated: "
+        << QDateTime::currentDateTime().toString(Qt::ISODate)
+        << "\n";
+    out << QString("=").repeated(60) << "\n\n";
+
+    for (int i = 0; i < m_logModel->rowCount(); ++i) {
+        QModelIndex idx = m_logModel->index(i, 0);
+        out << m_logModel->data(idx, Qt::DisplayRole).toString() << "\n";
+    }
+
+    file.close();
+    statusBar()->showMessage("Logs exported to: " + path, 3000);
+}
+
 void MainWindow::saveLastProfile(const QString &path)
 {
     QSettings settings("devpulse", "devpulse");

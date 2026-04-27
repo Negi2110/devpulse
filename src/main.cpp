@@ -36,9 +36,21 @@ int main(int argc, char *argv[])
             gridline-color: #3e3e3e;
             border: none;
             selection-background-color: #094771;
+            selection-color: #ffffff;
+            outline: none;
         }
-        QTableView::alternate-row {
+        QTableView::item {
+            padding: 4px;
+            border: none;
+            color: #d4d4d4;
+            background-color: #1e1e1e;
+        }
+        QTableView::item:alternate {
             background-color: #252526;
+        }
+        QTableView::item:selected {
+            background-color: #094771;
+            color: #ffffff;
         }
         QHeaderView::section {
             background-color: #2d2d2d;

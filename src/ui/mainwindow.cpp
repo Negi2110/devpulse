@@ -23,6 +23,7 @@
 #include <QTextStream>
 #include <QFile>
 #include <QDir>
+#include "core/prometheusserver.h"
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -31,6 +32,7 @@ MainWindow::MainWindow(QWidget *parent)
     , m_engine(new MonitorEngine(m_repo, this))
     , m_trayManager(new TrayManager(this, this))
     , m_logModel(new LogModel(this))
+    , m_prometheusServer(new PrometheusServer(m_repo, this))
 
 {
     setupUi();
@@ -137,7 +139,14 @@ void MainWindow::setupUi()
     QAction *quitAction = new QAction("&Quit", this);
     quitAction->setShortcut(QKeySequence::Quit);
     connect(quitAction, &QAction::triggered, this, &MainWindow::onFileQuit);
+
     fileMenu->addAction(quitAction);
+    // Start Prometheus endpoint
+    if (m_prometheusServer->start(9898)) {
+        statusBar()->showMessage(
+            "Metrics at http://localhost:9898/metrics", 5000);
+    }
+
 }
 
 void MainWindow::connectSignals()

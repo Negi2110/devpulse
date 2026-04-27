@@ -14,6 +14,7 @@ class ServiceTableModel;
 class MonitorEngine;
 class LatencyGraphWidget;
 class TrayManager;
+class PrometheusServer;
 
 class MainWindow : public QMainWindow
 {
@@ -48,6 +49,7 @@ private:
     JsonProfileManager  m_profileManager;
     LogModel           *m_logModel;
     LogPanelWidget     *m_logPanel;
+    PrometheusServer *m_prometheusServer;
 };
 
 #endif // MAINWINDOW_H

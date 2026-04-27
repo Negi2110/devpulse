@@ -11,6 +11,7 @@
 #include "monitoring/latencystore.h"
 #include "models/logmodel.h"
 #include "monitoring/uptimetracker.h"
+#include "storage/databasemanager.h"
 
 class MonitorEngine : public QObject
 {
@@ -46,7 +47,7 @@ private:
     QMap<QString, ServiceMonitor>   m_monitors;
     LatencyStore                    m_latencyStore;
     UptimeTracker m_uptimeTracker;
-
+    DatabaseManager m_db;
 };
 
 #endif // MONITORENGINE_H

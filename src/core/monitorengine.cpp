@@ -1,5 +1,7 @@
 #include "monitorengine.h"
 #include "checkers/checkerfactory.h"
+#include <QStandardPaths>
+#include <QDir>
 
 MonitorEngine::MonitorEngine(ServiceRepository *repo, QObject *parent)
     : QObject(parent)
@@ -13,6 +15,10 @@ MonitorEngine::MonitorEngine(ServiceRepository *repo, QObject *parent)
             this, [this](const QString &id) {
                 stopMonitoring(id);
             });
+
+    QString dbPath = QDir::homePath() + "/.devpulse.db";
+    m_db.open(dbPath);
+
 }
 
 void MonitorEngine::startMonitoring(const QString &serviceId)
@@ -82,6 +88,13 @@ void MonitorEngine::onCheckFinished(const CheckResult &result)
     service.uptimePercent = m_uptimeTracker.uptimePercent(result.serviceId);
     if (result.latencyMs > 0)
         m_latencyStore.addReading(result.serviceId,result.latencyMs);
+    if (m_db.isOpen()) {
+        m_db.insertCheckResult(
+            result.serviceId,
+            service.statusString(),
+            result.latencyMs
+            );
+    }
     m_uptimeTracker.record(result.serviceId,
                            result.status != ServiceStatus::Down);
     LogEntry entry;

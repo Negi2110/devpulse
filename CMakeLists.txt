@@ -8,7 +8,7 @@ set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTOUIC ON)
 set(CMAKE_AUTORCC ON)
 
-find_package(Qt5 REQUIRED COMPONENTS Core Widgets Network)
+find_package(Qt5 REQUIRED COMPONENTS Core Widgets Network Charts Sql)
 
 add_executable(devpulse
     src/main.cpp
@@ -28,23 +28,32 @@ add_executable(devpulse
     src/core/checkers/tcpchecker.cpp
     src/core/checkers/checkerfactory.h
     src/core/checkers/checkerfactory.cpp
-    src/core/monitorengine.h src/core/monitorengine.cpp
-    src/core/monitoring/latencystore.h src/core/monitoring/latencystore.cpp
-    src/ui/latencygraphwidget.h src/ui/latencygraphwidget.cpp
-    src/ui/traymanager.h src/ui/traymanager.cpp
-    src/core/storage/jsonprofilemanager.h src/core/storage/jsonprofilemanager.cpp
-    src/models/logmodel.h src/models/logmodel.cpp
-    src/ui/logpanelwidget.h src/ui/logpanelwidget.cpp
-    src/core/monitoring/uptimetracker.h src/core/monitoring/uptimetracker.cpp
+    src/core/monitorengine.h
+    src/core/monitorengine.cpp
+    src/core/monitoring/latencystore.h
+    src/core/monitoring/latencystore.cpp
+    src/ui/latencygraphwidget.h
+    src/ui/latencygraphwidget.cpp
+    src/ui/traymanager.h
+    src/ui/traymanager.cpp
+    src/core/storage/jsonprofilemanager.h
+    src/core/storage/jsonprofilemanager.cpp
+    src/core/storage/databasemanager.h
+    src/core/storage/databasemanager.cpp
+    src/models/logmodel.h
+    src/models/logmodel.cpp
+    src/ui/logpanelwidget.h
+    src/ui/logpanelwidget.cpp
+    src/core/monitoring/uptimetracker.h
+    src/core/monitoring/uptimetracker.cpp
 )
-find_package(Qt5 REQUIRED COMPONENTS Core Widgets Network Charts)
 
 target_link_libraries(devpulse PRIVATE
     Qt5::Core
     Qt5::Widgets
     Qt5::Network
     Qt5::Charts
-
+    Qt5::Sql
 )
 
 target_include_directories(devpulse PRIVATE

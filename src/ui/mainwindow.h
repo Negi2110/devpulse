@@ -34,6 +34,7 @@ private:
     void closeEvent(QCloseEvent *event) override;
     void onSaveProfile();
     void onLoadProfile();
+    void onTableContextMenu(const QPoint &pos);
     void saveLastProfile(const QString &path);
     void autoLoadLastProfile();
 

@@ -18,6 +18,8 @@
 #include <QFileDialog>
 #include <QMessageBox>
 #include <QFileInfo>
+#include <QClipboard>
+#include <QStyle>
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -49,6 +51,7 @@ void MainWindow::setupUi()
     m_tableView->setEditTriggers(QAbstractItemView::NoEditTriggers);
     m_tableView->verticalHeader()->setVisible(false);
     m_tableView->setAlternatingRowColors(true);
+    m_tableView->setContextMenuPolicy(Qt::CustomContextMenu);
 
     // Create graph widget
     m_graphWidget = new LatencyGraphWidget(this);
@@ -145,6 +148,8 @@ void MainWindow::connectSignals()
             this, &MainWindow::onFileQuit);
     connect(m_engine, &MonitorEngine::logEntry,
             m_logModel, &LogModel::addEntry);
+    connect(m_tableView, &QTableView::customContextMenuRequested,
+            this, &MainWindow::onTableContextMenu);
 }
 
 void MainWindow::onFileQuit()
@@ -224,6 +229,49 @@ void MainWindow::onAddService()
             QString("%1 service(s) monitored").arg(m_repo->count())
             );
     }
+}
+void MainWindow::onTableContextMenu(const QPoint &pos)
+{
+    QModelIndex index = m_tableView->indexAt(pos);
+    if (!index.isValid()) return;
+
+    QString serviceId = m_tableModel->serviceIdAt(index.row());
+    Service service   = m_repo->findById(serviceId);
+    if (service.id.isEmpty()) return;
+
+    QMenu menu(this);
+
+    // Check Now
+    QAction *checkNow = menu.addAction(
+        QString("Check Now — %1").arg(service.name));
+    connect(checkNow, &QAction::triggered, this, [this, serviceId]() {
+        m_engine->checkNow(serviceId);
+        statusBar()->showMessage("Manual check triggered", 2000);
+    });
+
+    menu.addSeparator();
+
+    // Copy URL
+    QAction *copyUrl = menu.addAction("Copy URL");
+    connect(copyUrl, &QAction::triggered, this, [service]() {
+        QApplication::clipboard()->setText(service.url);
+    });
+
+    menu.addSeparator();
+
+    // Remove Service
+    QAction *remove = menu.addAction(
+        QString("Remove %1").arg(service.name));
+    remove->setIcon(QApplication::style()->standardIcon(
+        QStyle::SP_TrashIcon));
+    connect(remove, &QAction::triggered, this, [this, serviceId]() {
+        m_repo->removeService(serviceId);
+        m_statusLabel->setText(
+            QString("%1 service(s) monitored").arg(m_repo->count())
+            );
+    });
+
+    menu.exec(m_tableView->viewport()->mapToGlobal(pos));
 }
 void MainWindow::saveLastProfile(const QString &path)
 {

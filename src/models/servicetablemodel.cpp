@@ -1,7 +1,6 @@
-
-
 #include "servicetablemodel.h"
 #include <QColor>
+#include <QFont>
 
 ServiceTableModel::ServiceTableModel(QObject *parent)
     : QAbstractTableModel(parent)
@@ -43,10 +42,32 @@ QVariant ServiceTableModel::data(const QModelIndex &index, int role) const
 
     if (role == Qt::ForegroundRole && index.column() == ColStatus) {
         switch (s.status) {
-        case ServiceStatus::Up:       return QColor(Qt::green);
-        case ServiceStatus::Degraded: return QColor(255, 165, 0);
-        case ServiceStatus::Down:     return QColor(Qt::red);
-        default:                      return QColor(Qt::gray);
+        case ServiceStatus::Up:
+            return QColor("#4ec9b0");      // teal green
+        case ServiceStatus::Degraded:
+            return QColor("#ce9178");      // orange
+        case ServiceStatus::Down:
+            return QColor("#f44747");      // bright red
+        default:
+            return QColor("#858585");      // gray
+        }
+    }
+
+    if (role == Qt::FontRole && index.column() == ColStatus) {
+        QFont font;
+        font.setBold(true);
+        return font;
+    }
+
+    if (role == Qt::TextAlignmentRole) {
+        switch (index.column()) {
+        case ColLatency:
+        case ColUptime:
+            return Qt::AlignRight + Qt::AlignVCenter;
+        case ColStatus:
+            return Qt::AlignCenter;
+        default:
+            return Qt::AlignLeft + Qt::AlignVCenter;
         }
     }
 

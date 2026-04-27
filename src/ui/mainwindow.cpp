@@ -40,7 +40,7 @@ MainWindow::~MainWindow() {}
 
 void MainWindow::setupUi()
 {
-    setWindowTitle("DevPulse");
+    setWindowTitle("DevPulse v0.1");
     setMinimumSize(1100, 650);
 
     // Table view
@@ -52,6 +52,13 @@ void MainWindow::setupUi()
     m_tableView->verticalHeader()->setVisible(false);
     m_tableView->setAlternatingRowColors(true);
     m_tableView->setContextMenuPolicy(Qt::CustomContextMenu);
+    m_tableView->setShowGrid(false);
+    m_tableView->setSelectionBehavior(QAbstractItemView::SelectRows);
+    m_tableView->horizontalHeader()->setDefaultSectionSize(150);
+    m_tableView->horizontalHeader()->setSectionResizeMode(
+        ServiceTableModel::ColUrl, QHeaderView::Stretch);
+    m_tableView->verticalHeader()->setDefaultSectionSize(36);
+    m_tableView->setWordWrap(false);
 
     // Create graph widget
     m_graphWidget = new LatencyGraphWidget(this);

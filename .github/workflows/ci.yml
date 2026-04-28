@@ -1,0 +1,38 @@
+name: DevPulse CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Install Qt and dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+            qtbase5-dev \
+            libqt5charts5-dev \
+            libqt5sql5-sqlite \
+            libgtest-dev \
+            cmake \
+            ninja-build \
+            build-essential
+
+      - name: Configure CMake
+        run: cmake -B build -G Ninja
+
+      - name: Build
+        run: cmake --build build
+
+      - name: Run Tests
+        run: |
+          cd build
+          ctest --output-on-failure

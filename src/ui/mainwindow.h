@@ -8,6 +8,7 @@
 #include <QSettings>
 #include "models/logmodel.h"
 #include "ui/logpanelwidget.h"
+#include "core/webhookalerter.h"
 
 class ServiceRepository;
 class ServiceTableModel;
@@ -32,7 +33,7 @@ private slots:
     void onLoadProfile();
     void onExportLogs();
     void onTableContextMenu(const QPoint &pos);
-
+    void onConfigureWebhook();
 private:
     void setupUi();
     void connectSignals();
@@ -52,6 +53,7 @@ private:
     LogPanelWidget     *m_logPanel;
     PrometheusServer *m_prometheusServer;
     IncidentPanel *m_incidentPanel;
+    WebhookAlerter *m_webhookAlerter;
 };
 
 #endif // MAINWINDOW_H

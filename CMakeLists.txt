@@ -49,6 +49,7 @@ add_executable(devpulse
     src/core/prometheusserver.h src/core/prometheusserver.cpp
     src/core/monitoring/incidenttracker.h src/core/monitoring/incidenttracker.cpp
     src/ui/incidentpanel.h src/ui/incidentpanel.cpp
+    src/core/webhookalerter.h src/core/webhookalerter.cpp
 )
 
 target_link_libraries(devpulse PRIVATE

@@ -23,8 +23,10 @@
 #include <QTextStream>
 #include <QFile>
 #include <QDir>
+#include <QInputDialog>
 #include "core/prometheusserver.h"
 #include "ui/incidentpanel.h"
+#include <QSettings>
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -34,6 +36,7 @@ MainWindow::MainWindow(QWidget *parent)
     , m_trayManager(new TrayManager(this, this))
     , m_logModel(new LogModel(this))
     , m_prometheusServer(new PrometheusServer(m_repo, this))
+    , m_webhookAlerter(new WebhookAlerter(this))
 
 {
     setupUi();
@@ -139,6 +142,10 @@ void MainWindow::setupUi()
     fileMenu->addAction(exportAction);
 
     fileMenu->addSeparator();
+    QAction *webhookAction = new QAction("&Configure Webhook", this);
+    connect(webhookAction, &QAction::triggered,
+            this, &MainWindow::onConfigureWebhook);
+    fileMenu->addAction(webhookAction);
 
     QAction *quitAction = new QAction("&Quit", this);
     quitAction->setShortcut(QKeySequence::Quit);
@@ -199,8 +206,37 @@ void MainWindow::connectSignals()
             this, &MainWindow::onTableContextMenu);
     connect(m_engine, &MonitorEngine::serviceStatusChanged,
             m_incidentPanel, &IncidentPanel::refresh);
+    connect(m_engine, &MonitorEngine::serviceStatusChanged,
+            m_webhookAlerter, &WebhookAlerter::onServiceStatusChanged);
 }
+void MainWindow::onConfigureWebhook()
+{
+    bool ok;
+    QString current = m_webhookAlerter->webhookUrl();
+    QString url = QInputDialog::getText(
+        this,
+        "Configure Webhook",
+        "Webhook URL (Slack/Discord/custom):\n"
+        "Leave empty to disable alerts.",
+        QLineEdit::Normal,
+        current,
+        &ok
+        );
 
+    if (!ok) return;
+
+    m_webhookAlerter->setWebhookUrl(url.trimmed());
+
+    // Save to QSettings
+    QSettings settings("devpulse", "devpulse");
+    settings.setValue("webhookUrl", url.trimmed());
+
+    if (url.trimmed().isEmpty()) {
+        statusBar()->showMessage("Webhook alerts disabled", 3000);
+    } else {
+        statusBar()->showMessage("Webhook configured: " + url, 3000);
+    }
+}
 void MainWindow::onFileQuit()
 {
     QApplication::quit();
@@ -367,6 +403,11 @@ void MainWindow::autoLoadLastProfile()
 {
     QSettings settings("devpulse", "devpulse");
     QString path = settings.value("lastProfile").toString();
+    QString webhookUrl = settings.value("webhookUrl").toString();
+    if (!webhookUrl.isEmpty())
+        m_webhookAlerter->setWebhookUrl(webhookUrl);
+    if (!webhookUrl.isEmpty())
+        m_webhookAlerter->setWebhookUrl(webhookUrl);
 
     if (path.isEmpty()) return;
 

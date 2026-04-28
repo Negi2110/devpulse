@@ -46,10 +46,17 @@ add_executable(devpulse
     src/ui/logpanelwidget.cpp
     src/core/monitoring/uptimetracker.h
     src/core/monitoring/uptimetracker.cpp
-    src/core/prometheusserver.h src/core/prometheusserver.cpp
-    src/core/monitoring/incidenttracker.h src/core/monitoring/incidenttracker.cpp
-    src/ui/incidentpanel.h src/ui/incidentpanel.cpp
-    src/core/webhookalerter.h src/core/webhookalerter.cpp
+    src/core/prometheusserver.h
+    src/core/prometheusserver.cpp
+    src/core/monitoring/incidenttracker.h
+    src/core/monitoring/incidenttracker.cpp
+    src/ui/incidentpanel.h
+    src/ui/incidentpanel.cpp
+    src/core/webhookalerter.h
+    src/core/webhookalerter.cpp
+    src/core/plugins/ICheckerPlugin.h
+    src/core/plugins/PluginLoader.h
+    src/core/plugins/PluginLoader.cpp
 )
 
 target_link_libraries(devpulse PRIVATE
@@ -66,3 +73,4 @@ target_include_directories(devpulse PRIVATE
 
 enable_testing()
 add_subdirectory(tests)
+add_subdirectory(plugins/ping_checker)

@@ -12,7 +12,7 @@
 #include "models/logmodel.h"
 #include "monitoring/uptimetracker.h"
 #include "storage/databasemanager.h"
-
+#include "plugins/PluginLoader.h"
 class MonitorEngine : public QObject
 {
     Q_OBJECT
@@ -49,6 +49,7 @@ private:
     LatencyStore                    m_latencyStore;
     UptimeTracker m_uptimeTracker;
     DatabaseManager m_db;
+    PluginLoader m_pluginLoader;
 };
 
 #endif // MONITORENGINE_H

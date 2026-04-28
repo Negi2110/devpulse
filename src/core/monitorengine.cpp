@@ -2,7 +2,8 @@
 #include "checkers/checkerfactory.h"
 #include <QStandardPaths>
 #include <QDir>
-
+#include <QCoreApplication>
+#include "checkers/checkerfactory.h"
 MonitorEngine::MonitorEngine(ServiceRepository *repo, QObject *parent)
     : QObject(parent)
     , m_repo(repo)
@@ -18,7 +19,11 @@ MonitorEngine::MonitorEngine(ServiceRepository *repo, QObject *parent)
 
     QString dbPath = QDir::homePath() + "/.devpulse.db";
     m_db.open(dbPath);
-
+    QString pluginDir = QCoreApplication::applicationDirPath()
+                        + "/../../plugins/bin";
+    int loaded = m_pluginLoader.loadPlugins(pluginDir);
+    if (loaded > 0)
+        CheckerFactory::setPluginLoader(&m_pluginLoader);
 }
 
 void MonitorEngine::startMonitoring(const QString &serviceId)

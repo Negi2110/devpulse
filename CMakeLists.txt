@@ -47,6 +47,8 @@ add_executable(devpulse
     src/core/monitoring/uptimetracker.h
     src/core/monitoring/uptimetracker.cpp
     src/core/prometheusserver.h src/core/prometheusserver.cpp
+    src/core/monitoring/incidenttracker.h src/core/monitoring/incidenttracker.cpp
+    src/ui/incidentpanel.h src/ui/incidentpanel.cpp
 )
 
 target_link_libraries(devpulse PRIVATE

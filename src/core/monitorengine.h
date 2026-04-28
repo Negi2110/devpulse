@@ -28,6 +28,7 @@ public:
     double uptimePercent(const QString &serviceId) const {
         return m_uptimeTracker.uptimePercent(serviceId);
     }
+    DatabaseManager& db() { return m_db; };
 signals:
     void serviceStatusChanged(const Service &service);
     void logEntry(const LogEntry &entry);

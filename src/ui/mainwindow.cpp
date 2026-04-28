@@ -24,6 +24,7 @@
 #include <QFile>
 #include <QDir>
 #include "core/prometheusserver.h"
+#include "ui/incidentpanel.h"
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -95,9 +96,12 @@ void MainWindow::setupUi()
     m_logPanel = new LogPanelWidget(m_logModel, this);
     m_logPanel->setMinimumHeight(150);
     splitter->addWidget(m_logPanel);
-    splitter->setStretchFactor(0, 1);
-    splitter->setStretchFactor(1, 1);
     splitter->setStretchFactor(2, 0);
+
+    m_incidentPanel = new IncidentPanel(m_repo, &m_engine->db(), this);
+    m_incidentPanel->setMinimumHeight(150);
+    splitter->addWidget(m_incidentPanel);
+    splitter->setStretchFactor(3, 0);
 
     setCentralWidget(splitter);
     // Status bar
@@ -193,6 +197,8 @@ void MainWindow::connectSignals()
             m_logModel, &LogModel::addEntry);
     connect(m_tableView, &QTableView::customContextMenuRequested,
             this, &MainWindow::onTableContextMenu);
+    connect(m_engine, &MonitorEngine::serviceStatusChanged,
+            m_incidentPanel, &IncidentPanel::refresh);
 }
 
 void MainWindow::onFileQuit()

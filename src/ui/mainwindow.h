@@ -15,6 +15,7 @@ class MonitorEngine;
 class LatencyGraphWidget;
 class TrayManager;
 class PrometheusServer;
+class IncidentPanel;
 
 class MainWindow : public QMainWindow
 {
@@ -50,6 +51,7 @@ private:
     LogModel           *m_logModel;
     LogPanelWidget     *m_logPanel;
     PrometheusServer *m_prometheusServer;
+    IncidentPanel *m_incidentPanel;
 };
 
 #endif // MAINWINDOW_H

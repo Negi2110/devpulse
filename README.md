@@ -45,7 +45,8 @@ Monitor your local HTTP APIs, databases, and background workers from a single da
 - `ICheckerPlugin` interface for implementing custom checkers (gRPC, Redis, WebSocket etc)
 
 ### Utility
-- Right-click context menu — Check Now, Copy URL, Remove
+- Right-click context menu — Check Now, Edit, Copy URL, Remove
+- Edit existing service — modify name, URL, interval without removing
 - Export logs to text file
 - Dark theme UI (Qt Style Sheets)
 - Manual "Check Now" trigger per service

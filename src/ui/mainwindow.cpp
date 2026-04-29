@@ -329,6 +329,23 @@ void MainWindow::onTableContextMenu(const QPoint &pos)
     // Check Now
     QAction *checkNow = menu.addAction(
         QString("Check Now — %1").arg(service.name));
+
+    // Edit Service
+    QAction *edit = menu.addAction(
+        QString("Edit %1").arg(service.name));
+    connect(edit, &QAction::triggered, this, [this, service]() {
+        AddServiceDialog dlg(service, this);
+        if (dlg.exec() == QDialog::Accepted) {
+            Service updated = dlg.service();
+            m_repo->updateService(updated);
+
+            // Restart monitoring with new config
+            m_engine->stopMonitoring(updated.id);
+            m_engine->startMonitoring(updated.id);
+        }
+    });
+
+    menu.addSeparator();
     connect(checkNow, &QAction::triggered, this, [this, serviceId]() {
         m_engine->checkNow(serviceId);
         statusBar()->showMessage("Manual check triggered", 2000);

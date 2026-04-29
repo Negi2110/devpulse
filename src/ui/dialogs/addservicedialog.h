@@ -12,9 +12,13 @@ class AddServiceDialog : public QDialog
     Q_OBJECT
 
 public:
+    // Add mode
     explicit AddServiceDialog(QWidget *parent = nullptr);
 
-    // Call this after exec() returns Accepted
+    // Edit mode — pre-fills fields with existing service
+    explicit AddServiceDialog(const Service &service,
+                              QWidget *parent = nullptr);
+
     Service service() const;
 
 private slots:
@@ -23,14 +27,16 @@ private slots:
 private:
     void setupUi();
     void setupValidation();
+    void populateFields(const Service &service);
 
-    QLineEdit       *m_nameEdit;
-    QLineEdit       *m_urlEdit;
-    QSpinBox        *m_intervalSpin;
-    QSpinBox        *m_thresholdSpin;
+    QLineEdit        *m_nameEdit;
+    QLineEdit        *m_urlEdit;
+    QSpinBox         *m_intervalSpin;
+    QSpinBox         *m_thresholdSpin;
     QDialogButtonBox *m_buttonBox;
 
     Service m_service;
+    bool    m_editMode = false;
 };
 
 #endif // ADDSERVICEDIALOG_H

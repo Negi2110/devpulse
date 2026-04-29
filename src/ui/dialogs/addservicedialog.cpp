@@ -2,14 +2,26 @@
 #include <QFormLayout>
 #include <QVBoxLayout>
 #include <QLabel>
-#include <QMessageBox>
 #include <QPushButton>
 
 AddServiceDialog::AddServiceDialog(QWidget *parent)
     : QDialog(parent)
+    , m_editMode(false)
 {
     setupUi();
     setupValidation();
+}
+
+AddServiceDialog::AddServiceDialog(const Service &service,
+                                   QWidget *parent)
+    : QDialog(parent)
+    , m_editMode(true)
+    , m_service(service)
+{
+    setupUi();
+    setupValidation();
+    populateFields(service);
+    setWindowTitle("Edit Service");
 }
 
 void AddServiceDialog::setupUi()
@@ -17,14 +29,14 @@ void AddServiceDialog::setupUi()
     setWindowTitle("Add Service");
     setMinimumWidth(400);
 
-    // Form fields
-    m_nameEdit     = new QLineEdit(this);
-    m_urlEdit      = new QLineEdit(this);
-    m_intervalSpin = new QSpinBox(this);
+    m_nameEdit      = new QLineEdit(this);
+    m_urlEdit       = new QLineEdit(this);
+    m_intervalSpin  = new QSpinBox(this);
     m_thresholdSpin = new QSpinBox(this);
 
     m_nameEdit->setPlaceholderText("e.g. Auth API");
-    m_urlEdit->setPlaceholderText("e.g. http://localhost:3000 or localhost:5432");
+    m_urlEdit->setPlaceholderText(
+        "e.g. http://localhost:3000 or localhost:5432");
 
     m_intervalSpin->setRange(5, 300);
     m_intervalSpin->setValue(30);
@@ -34,18 +46,14 @@ void AddServiceDialog::setupUi()
     m_thresholdSpin->setValue(2000);
     m_thresholdSpin->setSuffix(" ms");
 
-    // Form layout — label + field pairs
     QFormLayout *form = new QFormLayout;
     form->addRow("Service Name:", m_nameEdit);
     form->addRow("URL / Address:", m_urlEdit);
     form->addRow("Check Interval:", m_intervalSpin);
     form->addRow("Degraded Threshold:", m_thresholdSpin);
 
-    // OK / Cancel buttons
     m_buttonBox = new QDialogButtonBox(
-        QDialogButtonBox::Ok | QDialogButtonBox::Cancel,
-        this
-        );
+        QDialogButtonBox::Ok | QDialogButtonBox::Cancel, this);
 
     QVBoxLayout *main = new QVBoxLayout(this);
     main->addLayout(form);
@@ -59,7 +67,6 @@ void AddServiceDialog::setupUi()
 
 void AddServiceDialog::setupValidation()
 {
-    // Disable OK until both name and URL are filled
     auto validate = [this]() {
         bool ok = !m_nameEdit->text().trimmed().isEmpty() &&
                   !m_urlEdit->text().trimmed().isEmpty();
@@ -72,15 +79,33 @@ void AddServiceDialog::setupValidation()
     connect(m_urlEdit,  &QLineEdit::textChanged, this, validate);
 }
 
+void AddServiceDialog::populateFields(const Service &service)
+{
+    m_nameEdit->setText(service.name);
+    m_urlEdit->setText(service.url);
+    m_intervalSpin->setValue(service.intervalSecs);
+    m_thresholdSpin->setValue(service.degradedThresholdMs);
+
+    // Enable OK since fields are populated
+    m_buttonBox->button(QDialogButtonBox::Ok)->setEnabled(true);
+}
+
 void AddServiceDialog::onAccepted()
 {
-    m_service = Service::create(
-        m_nameEdit->text().trimmed(),
-        m_urlEdit->text().trimmed()
-        );
-    m_service.intervalSecs        = m_intervalSpin->value();
-    m_service.degradedThresholdMs = m_thresholdSpin->value();
-
+    if (m_editMode) {
+        // Keep existing ID and metadata
+        m_service.name                = m_nameEdit->text().trimmed();
+        m_service.url                 = m_urlEdit->text().trimmed();
+        m_service.intervalSecs        = m_intervalSpin->value();
+        m_service.degradedThresholdMs = m_thresholdSpin->value();
+    } else {
+        m_service = Service::create(
+            m_nameEdit->text().trimmed(),
+            m_urlEdit->text().trimmed()
+            );
+        m_service.intervalSecs        = m_intervalSpin->value();
+        m_service.degradedThresholdMs = m_thresholdSpin->value();
+    }
     accept();
 }
 

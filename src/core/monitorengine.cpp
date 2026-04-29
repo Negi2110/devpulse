@@ -25,7 +25,11 @@ MonitorEngine::MonitorEngine(ServiceRepository *repo, QObject *parent)
     if (loaded > 0)
         CheckerFactory::setPluginLoader(&m_pluginLoader);
 }
-
+void MonitorEngine::clearLatencyHistory(const QString &serviceId)
+{
+    m_latencyStore.removeService(serviceId);
+    m_uptimeTracker.removeService(serviceId);
+}
 void MonitorEngine::startMonitoring(const QString &serviceId)
 {
     if (m_monitors.contains(serviceId))

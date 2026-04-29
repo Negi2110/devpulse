@@ -29,6 +29,7 @@ public:
         return m_uptimeTracker.uptimePercent(serviceId);
     }
     DatabaseManager& db() { return m_db; };
+    void clearLatencyHistory(const QString &serviceId);
 signals:
     void serviceStatusChanged(const Service &service);
     void logEntry(const LogEntry &entry);

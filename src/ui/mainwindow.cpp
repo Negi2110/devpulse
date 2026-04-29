@@ -172,12 +172,17 @@ void MainWindow::connectSignals()
             m_tableModel, &ServiceTableModel::updateService);
 
     connect(m_engine, &MonitorEngine::serviceStatusChanged,
-            this, [this](const Service &service){
-               m_graphWidget->updateForService(
-                  service.id,
-                m_engine->latencyStore()
-            );
-    });
+            this, [this](const Service &service) {
+                QModelIndex current = m_tableView->currentIndex();
+                if (!current.isValid()) return;
+                QString selectedId = m_tableModel->serviceIdAt(current.row());
+                if (selectedId == service.id) {
+                    m_graphWidget->updateForService(
+                        service.id,
+                        m_engine->latencyStore()
+                        );
+                }
+            });
 
     connect(m_tableView->selectionModel(),
             &QItemSelectionModel::currentRowChanged,
@@ -337,11 +342,16 @@ void MainWindow::onTableContextMenu(const QPoint &pos)
         AddServiceDialog dlg(service, this);
         if (dlg.exec() == QDialog::Accepted) {
             Service updated = dlg.service();
-            m_repo->updateService(updated);
 
-            // Restart monitoring with new config
-            m_engine->stopMonitoring(updated.id);
-            m_engine->startMonitoring(updated.id);
+
+            QString uid = updated.id;
+            m_engine->stopMonitoring(uid);
+            m_engine->clearLatencyHistory(uid);
+            m_repo->updateService(updated);
+            m_graphWidget->clearGraph();
+            QTimer::singleShot(500, this, [this, uid]() {
+                m_engine->startMonitoring(uid);
+            });
         }
     });
 
@@ -423,8 +433,7 @@ void MainWindow::autoLoadLastProfile()
     QString webhookUrl = settings.value("webhookUrl").toString();
     if (!webhookUrl.isEmpty())
         m_webhookAlerter->setWebhookUrl(webhookUrl);
-    if (!webhookUrl.isEmpty())
-        m_webhookAlerter->setWebhookUrl(webhookUrl);
+
 
     if (path.isEmpty()) return;
 
